@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime ❝Quote❞ Fetcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            color: #e6e6e6;
+            padding: 10px;
+        }
+
+        .quote-card {
+            width: 80%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            font-size: 18px;
+            padding: 15px 25px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007BFF;
+            /* Primary color */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: none;
+            /* initially hidden */
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #quote-content::before {
+            content: '“';
+        }
+
+        #quote-content::after {
+            content: '”';
+        }
+
+        @media only screen and (max-width: 600px) {
+            .quote-card {
+                width: 100%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="quote-card">
+        <h1><span id="quote-anime"></span></h1>
+        <div class="loader" id="loading-ring"></div>
+        <p id="quote-content">Loading quote...</p>
+        <button id="regenerate">Re-generate</button>
+    </div>
+
+    <script>
+        function fetchAndDisplayQuote() {
+            // Show loading ring
+            document.getElementById("loading-ring").style.display = "block";
+
+            fetch("/api/quote")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("quote-content").textContent = data.quote;
+                    document.getElementById("quote-anime").textContent = data.anime;
+
+                    // Hide loading ring
+                    document.getElementById("loading-ring").style.display = "none";
+                })
+                .catch(error => {
+                    console.error("Failed to fetch new quote:", error);
+
+                    // Hide loading ring in case of an error too
+                    document.getElementById("loading-ring").style.display = "none";
+                });
+        }
+
+
+        // Fetch and display the quote immediately on page load
+        fetchAndDisplayQuote();
+
+        document.getElementById("regenerate").addEventListener("click", fetchAndDisplayQuote);
+    </script>
+</body>
+
+</html>
